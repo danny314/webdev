@@ -1,0 +1,16 @@
+<!DOCTYPE glassfish-web-app PUBLIC "-//GlassFish.org//DTD 
+GlassFish Application Server 3.1 Servlet 3.0//EN" 
+"http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
+<glassfish-web-app>
+   <ejb-ref>
+	   <ejb-ref-name>ejb/MyBean</ejb-ref-name>
+	   <!-- Remote Host (works) -->
+	  <jndi-name>corbaname:iiop:172.23.1.194:3700#java:global/remote-1.0-SNAPSHOT/remote2-ejb-1.0-SNAPSHOT/MyNameBean!com.acid.remote2.ejb.MyName</jndi-name> 
+	   <!--  local host -->
+	  <!--  <jndi-name>java:global/remote-1.0-SNAPSHOT/remote2-ejb-1.0-SNAPSHOT/MyNameBean!com.acid.remote2.ejb.MyName</jndi-name> -->
+	</ejb-ref>
+   <ejb-ref>
+	   <ejb-ref-name>ejb/LocalMyBean</ejb-ref-name>
+	   <jndi-name>java:global/remote-1.0-SNAPSHOT/remote2-ejb-1.0-SNAPSHOT/MyNameBean!com.acid.remote2.ejb.MyName</jndi-name>
+	</ejb-ref>
+</glassfish-web-app>

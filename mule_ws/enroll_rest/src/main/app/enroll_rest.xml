@@ -11,7 +11,10 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 
 <flow name="enroll_inbound">
     <http:inbound-endpoint name="enrollInboundEndpoint" address="http://localhost:8080/enroll"/>
-    <echo-component/>
+    <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+ 	<response>
+        <http:response-builder status="200" contentType="application/json" doc:name="HTTP Response Builder"/>
+    </response>
 </flow>
 
 </mule>

@@ -3,12 +3,16 @@ package com.pb.rabbit.client;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+
 /**
- * Client publish messages to an exchange on a remote rabbit mq broker. 
+ * Client to publish messages to an exchange on a remote rabbit mq broker. 
  */
 public class App 
 {
@@ -28,8 +32,18 @@ public class App
         
 		try {
 			connection = factory.newConnection();
-	        Channel channel = connection.createChannel();
-	        System.out.println( "Obtained channel " + channel);
+	        
+			Channel channel = connection.createChannel();
+	        
+	        //System.out.println( "Obtained channel " + channel);
+	        
+	        channel.basicPublish(
+	        		app.getProperty("broker.exchange01"),
+	        		app.getProperty("q01.routing.key"),
+	        		null, 
+	        		app.getRandomRegistrationBytes()
+	        );
+	        
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -48,4 +62,18 @@ public class App
     	}
     	return props.getProperty(key);
     }
+    
+    private JsonObject getRandomRegistration() {
+    	JsonObject model = Json.createObjectBuilder()
+    		.add("firstName", "Duke")
+    		.build();
+    	
+    	return model;
+    }
+
+    private byte[] getRandomRegistrationBytes() {
+    	String registrationJson = "{ \"name\":\"Duke\" }";
+    	return registrationJson.getBytes();
+    }
+    
 }

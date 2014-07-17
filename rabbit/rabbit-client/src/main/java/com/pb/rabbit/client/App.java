@@ -10,6 +10,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * Client to publish messages to an exchange on a remote rabbit mq broker. 
@@ -36,13 +37,16 @@ public class App
 			Channel channel = connection.createChannel();
 	        
 	        //System.out.println( "Obtained channel " + channel);
+			
+			for (int i = 0; i < 5000; i++) {
+		        channel.basicPublish(
+		        		app.getProperty("broker.exchange01"),
+		        		app.getProperty("q01.routing.key"),
+		        		null, 
+		        		app.getRandomRegistrationBytes()
+		        );
+			}
 	        
-	        channel.basicPublish(
-	        		app.getProperty("broker.exchange01"),
-	        		app.getProperty("q01.routing.key"),
-	        		null, 
-	        		app.getRandomRegistrationBytes()
-	        );
 	        
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -72,7 +76,7 @@ public class App
     }
 
     private byte[] getRandomRegistrationBytes() {
-    	String registrationJson = "{ \"name\":\"Duke\" }";
+    	String registrationJson = "{ \"name\":\"" + RandomStringUtils.randomAlphabetic(8) + "\" }";
     	return registrationJson.getBytes();
     }
     

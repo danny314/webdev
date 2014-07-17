@@ -12,5 +12,19 @@
 
  	<file:connector name="inboundFileConnector" pollingFrequency="5000" streaming="false" autoDelete="false"/>    
 
-                
+<amqp:connector name="amqpAutoAckLocalhostConnector"
+       host="172.17.0.2"
+       port="5672"
+       username="admin"
+        password="admin"
+                />
+
+<flow name="echoFlow1" doc:name="echoFlow1">
+
+<amqp:inbound-endpoint queueName="q01-enroll" exchangeName="exch01-topic"
+                      connector-ref="amqpAutoAckLocalhostConnector" />
+
+           <logger message="************ consuming message #[payload] ******************" level="WARN" />
+
+    </flow>                
 </mule>

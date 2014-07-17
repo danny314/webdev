@@ -30,15 +30,14 @@ public class App
         factory.setPassword(app.getProperty("broker.password"));
         
         Connection connection = null;
+        Channel channel = null;
         
 		try {
 			connection = factory.newConnection();
 	        
-			Channel channel = connection.createChannel();
+			channel = connection.createChannel();
 	        
-	        //System.out.println( "Obtained channel " + channel);
-			
-			for (int i = 0; i < 5000; i++) {
+			for (int i = 0; i < 5; i++) {
 		        channel.basicPublish(
 		        		app.getProperty("broker.exchange01"),
 		        		app.getProperty("q01.routing.key"),
@@ -50,7 +49,20 @@ public class App
 	        
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (channel != null) {
+					channel.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
+		
     }
     
     private String getProperty(String key) {

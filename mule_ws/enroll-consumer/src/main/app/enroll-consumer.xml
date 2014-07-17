@@ -3,14 +3,14 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:spring="http://www.springframework.org/schema/beans"
 	xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
 	xsi:schemaLocation="
 	http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.5/mule.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
-	http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/3.1/mule-amqp.xsd">
+	http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+	http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 
-<amqp:connector name="amqpConnectorWithFallback"
-                host="172.17.0.2"
-                username="admin"
-                password="admin" />
+ 	<file:connector name="inboundFileConnector" pollingFrequency="5000" streaming="false" autoDelete="false"/>    
+
                 
 </mule>

@@ -4,13 +4,48 @@
 	xmlns:spring="http://www.springframework.org/schema/beans"
 	xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
 	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns:jpa="http://www.mulesoft.org/schema/mule/jpa"
+	xmlns:jdbc="http://www.mulesoft.org/schema/mule/jdbc"
 	xsi:schemaLocation="
 	http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.5/mule.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 	http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
-	http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+    http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+    http://www.mulesoft.org/schema/mule/jpa http://www.mulesoft.org/schema/mule/jpa/current/mule-jpa.xsd
+    http://www.mulesoft.org/schema/mule/jdbc http://www.mulesoft.org/schema/mule/jdbc/current/mule-jdbc.xsd
+">
 
- 	<file:connector name="inboundFileConnector" pollingFrequency="5000" streaming="false" autoDelete="false"/>    
+    <spring:bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">
+        <spring:property name="driverClass">
+            <spring:value>oracle.jdbc.driver.OracleDriver</spring:value>
+        </spring:property>
+        <spring:property name="jdbcUrl">
+            <spring:value>${db.connection.jdbc.url}</spring:value>
+        </spring:property>
+
+        <spring:property name="user">
+            <spring:value>${db.connection.user}</spring:value>
+        </spring:property>
+        <spring:property name="password">
+            <spring:value>${db.connection.password}</spring:value>
+        </spring:property>
+
+        <spring:property name="properties">
+            <spring:props>
+                <spring:prop key="c3p0.acquire_increment">5</spring:prop>
+                <spring:prop key=" c3p0.idle_test_period">100</spring:prop>
+                <spring:prop key="c3p0.max_size">100</spring:prop>
+                <spring:prop key="c3p0.max_statements">1</spring:prop>
+                <spring:prop key=" c3p0.min_size">10</spring:prop>
+                <spring:prop key="user">${db.connection.user}
+                </spring:prop>
+                <spring:prop key="password">${db.connection.password}
+                </spring:prop>
+            </spring:props>
+        </spring:property>
+    </spring:bean>
 
 <amqp:connector name="amqpAutoAckLocalhostConnector"
        host="172.17.0.2"
@@ -18,13 +53,28 @@
        username="admin"
         password="admin"
                 />
+                
+	<jdbc:connector name="jdbcConnector" dataSource-ref="c3p0DataSource" validateConnections="false" transactionPerMessage="false" queryTimeout="10" pollingFrequency="10000" doc:name="JDBC">
+		<jdbc:query key="selectRegistrationId" value="SELECT EVENTID_SEQ.NEXTVAL FROM DUAL"/>
+		<jdbc:query key="createRegistration" value="insert into pb_registration (id, name) values (#[registrationId],#[json:name]) "/>
+	</jdbc:connector>	
+                
 
 <flow name="echoFlow1" doc:name="echoFlow1">
 
-<amqp:inbound-endpoint queueName="q01-enroll" exchangeName="exch01-topic"
-                      connector-ref="amqpAutoAckLocalhostConnector" />
+		<amqp:inbound-endpoint queueName="q01-enroll" exchangeName="exch01-topic" connector-ref="amqpAutoAckLocalhostConnector" />
 
-           <logger message="************ consuming message #[payload] ******************" level="WARN" />
-
+           <logger message="************ consuming message #[json:name] ******************" level="WARN" />
+           
+      		<jdbc:outbound-endpoint exchange-pattern="request-response" queryKey="selectRegistrationId" connector-ref="jdbcConnector" >
+				<jdbc:transaction action="ALWAYS_BEGIN"/>
+			</jdbc:outbound-endpoint>
+		
+			<set-variable variableName="registrationId" value="#[message.payload[0].NEXTVAL]" />
+			<logger message=" ** registrationId = #[registrationId]" level="DEBUG" />
+      			
+      		<jdbc:outbound-endpoint exchange-pattern="request-response" queryKey="createRegistration" connector-ref="jdbcConnector" >
+				<jdbc:transaction action="BEGIN_OR_JOIN"/>
+			</jdbc:outbound-endpoint>
     </flow>                
 </mule>

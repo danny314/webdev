@@ -45,8 +45,8 @@ public class EnrollRestService extends Application {
     @POST
     @Path("enroll")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void acceptEnrollment(@PathParam("id") long id) {
-        System.out.println("Enrolling " + id);
+    public void acceptEnrollment(User user) {
+        System.out.println("Enrolling " + user.getMessage());
     }
 
 }

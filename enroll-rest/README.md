@@ -1,4 +1,5 @@
-Tnis is a simple REST service using JEE7.
+This is a simple REST service using JEE7. It accepts and returns JSON. gson library is used for serialization and deserialization of Java into JSON and vice versa.
+
 To 'POST' data using JSON, curl can be used in the following way -
 curl -H "Content-Type: application/json" -d '{"message":"Some message"}' http://localhost:8080/enroll-rest-1.0-SNAPSHOT/helloworld/enroll
 

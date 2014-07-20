@@ -6,6 +6,9 @@
 
 package com.pb.enroll.rest;
 
+import com.pb.enroll.rest.beans.User;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -17,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -31,15 +35,18 @@ public class EnrollRestService extends Application {
         
     
     @GET
-    @Produces("text/plain")
-    public String getUser(@QueryParam("username") String userName) {
-        return "Hello" + userName;
+    @Produces(MediaType.APPLICATION_JSON)
+    public User getUser(@QueryParam("username") String userName) {
+        User user = new User();
+        user.setMessage("Hello " + userName);
+        return user;
     }    
     
     @POST
-    @Consumes("text/plain")
-    public void acceptEnrollment(String message) {
-        // Store the message
+    @Path("enroll")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void acceptEnrollment(@PathParam("id") long id) {
+        System.out.println("Enrolling " + id);
     }
 
 }

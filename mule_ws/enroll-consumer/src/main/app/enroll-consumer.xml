@@ -56,7 +56,7 @@
                 
 	<jdbc:connector name="jdbcConnector" dataSource-ref="c3p0DataSource" validateConnections="false" transactionPerMessage="false" queryTimeout="10" pollingFrequency="10000" doc:name="JDBC">
 		<jdbc:query key="selectRegistrationId" value="SELECT EVENTID_SEQ.NEXTVAL FROM DUAL"/>
-		<jdbc:query key="createRegistration" value="insert into pb_registration (id, name) values (#[registrationId],#[name]) "/>
+		<jdbc:query key="createRegistration" value="insert into pb_registration (id, name, email, username, gender) values (#[registrationId],#[name], #[email], #[username], #[gender]) "/>
 	</jdbc:connector>	
                 
 
@@ -65,6 +65,9 @@
 		<amqp:inbound-endpoint queueName="q01-enroll" exchangeName="exch01-topic" connector-ref="amqpAutoAckLocalhostConnector" />
 
 		   <set-variable variableName="name" value="#[json:name]" />
+		   <set-variable variableName="email" value="#[json:email]" />
+		   <set-variable variableName="username" value="#[json:username]" />
+		   <set-variable variableName="gender" value="#[json:gender]" />
            <logger message="************ consuming message #[json:name] ******************" level="DEBUG" />
            
       		<jdbc:outbound-endpoint exchange-pattern="request-response" queryKey="selectRegistrationId" connector-ref="jdbcConnector" >

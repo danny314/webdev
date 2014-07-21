@@ -43,8 +43,26 @@ public class EnrollRestService extends Application {
     @Context
     ResourceContext rc;
     
-    private Properties props;
+    private static Properties props;
     
+    private static ConnectionFactory factory; 
+    private static Connection connection = null;
+    
+    static {
+    	factory = new ConnectionFactory();
+        factory.setHost(getProperty("broker.host"));
+        factory.setUsername(getProperty("broker.username"));
+        factory.setPassword(getProperty("broker.password"));
+        
+		try {
+			connection = factory.newConnection();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@QueryParam("username") String userName) {
@@ -57,20 +75,12 @@ public class EnrollRestService extends Application {
     @Path("enroll")
     @Consumes(MediaType.APPLICATION_JSON)
     public void acceptEnrollment(User user) {
-        System.out.println("Enrolling " + user.getMessage());
+
+    	//System.out.println("Enrolling " + user.getMessage() + " on connection " + factory);
         
-        ConnectionFactory factory = new ConnectionFactory();
-        
-        factory.setHost(getProperty("broker.host"));
-        factory.setUsername(getProperty("broker.username"));
-        factory.setPassword(getProperty("broker.password"));
-        
-        Connection connection = null;
         Channel channel = null;
         
 		try {
-			connection = factory.newConnection();
-	        
 			channel = connection.createChannel();
 	        
 	        channel.basicPublish(
@@ -89,21 +99,18 @@ public class EnrollRestService extends Application {
 				if (channel != null) {
 					channel.close();
 				}
-				if (connection != null) {
-					connection.close();
-				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
     }
     
-    private String getProperty(String key) {
+    private static String getProperty(String key) {
     	if (props == null) {
     		props = new Properties();
     		
             try {
-    			props.load(getClass().getClassLoader().getResourceAsStream("broker.properties"));
+    			props.load(com.pb.enroll.rest.EnrollRestService.class.getClassLoader().getResourceAsStream("broker.properties"));
     		} catch (IOException e1) {
     			e1.printStackTrace();
     		}

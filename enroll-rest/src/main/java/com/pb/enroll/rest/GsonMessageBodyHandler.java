@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.UnsupportedEncodingException;
  
-@Provider
+//@Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>,

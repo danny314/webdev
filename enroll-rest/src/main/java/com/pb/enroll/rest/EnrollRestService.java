@@ -36,8 +36,8 @@ import org.apache.commons.lang3.SerializationUtils;
  *
  * @author rhea
  */
-@ApplicationPath("/*")
-@Path("helloworld")
+@ApplicationPath("/api")
+@Path("public")
 public class EnrollRestService extends Application {
     
     @Context
@@ -47,8 +47,13 @@ public class EnrollRestService extends Application {
     
     private static ConnectionFactory factory; 
     private static Connection connection = null;
+    private static final String exchange;
+    private static final String routingKey;
     
     static {
+    	exchange = getProperty("broker.exchange01");
+    	routingKey = getProperty("q01.routing.key");
+    	
     	factory = new ConnectionFactory();
         factory.setHost(getProperty("broker.host"));
         factory.setUsername(getProperty("broker.username"));
@@ -74,7 +79,7 @@ public class EnrollRestService extends Application {
     @POST
     @Path("enroll")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void acceptEnrollment(User user) {
+    public void acceptEnrollment(String user) {
 
     	//System.out.println("Enrolling " + user.getMessage() + " on connection " + factory);
         
@@ -83,12 +88,9 @@ public class EnrollRestService extends Application {
 		try {
 			channel = connection.createChannel();
 	        
-	        channel.basicPublish(
-	        		getProperty("broker.exchange01"),
-	        		getProperty("q01.routing.key"),
-	        		null,
+	        channel.basicPublish(exchange, routingKey, null,
 	        		//SerializationUtils.serialize(user.getMessage())
-	        		getRegistrationBytes(user.getMessage())
+	        		user.getBytes()
 	        );
 	        
 	        

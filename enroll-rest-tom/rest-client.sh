@@ -1,13 +1,13 @@
 #!/bin/bash 
          COUNTER=0
          date1=$(date +"%s")
-         while [  $COUNTER -lt 10000 ]; do
+         while [  $COUNTER -lt 1 ]; do
 curl -H "Content-Type: application/json" -d '{ 
 								"name":"'"$(tr -dc "[:alpha:]" < /dev/urandom | head -c 8)"'" 
 								,"email":"'"$(tr -dc "[:alpha:]" < /dev/urandom | head -c 8)"'" 
 								,"username":"'"$(tr -dc "[:alpha:]" < /dev/urandom | head -c 8)"'" 
 								,"gender":"F" 
-								}' http://localhost:8080/enroll-rest-1.0-SNAPSHOT/api/public/enroll           
+								}' http://localhost:8080/enroll-rest-tom-1.0-SNAPSHOT/rest/public/enroll           
              let COUNTER=COUNTER+1 
          done
          date2=$(date +"%s")

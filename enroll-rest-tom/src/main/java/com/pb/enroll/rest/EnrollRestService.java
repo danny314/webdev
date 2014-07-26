@@ -4,41 +4,31 @@
 
 package com.pb.enroll.rest;
 
-import com.pb.enroll.rest.beans.User;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ResourceContext;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.SerializationUtils;
+import com.pb.enroll.rest.beans.User;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
 
 /**
  *
  * @author rhea
  */
-@ApplicationPath("/api")
-@Path("public")
-public class EnrollRestService extends Application {
+@Path("/public")
+public class EnrollRestService {
     
     @Context
     ResourceContext rc;

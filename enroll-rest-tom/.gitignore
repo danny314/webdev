@@ -1,0 +1,6 @@
+nb-configuration.xml
+/target/
+.settings/
+.project
+.classpath
+src/main/resources/broker.properties

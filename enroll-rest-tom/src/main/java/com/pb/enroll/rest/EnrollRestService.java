@@ -27,7 +27,7 @@ import com.rabbitmq.client.ConnectionFactory;
  *
  * @author rhea
  */
-@Path("/public")
+@Path("public")
 public class EnrollRestService {
     
     @Context
@@ -61,6 +61,7 @@ public class EnrollRestService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@QueryParam("username") String userName) {
+    	System.out.println("into get ==================================================================");
         User user = new User();
         user.setMessage("Hello " + userName);
         return user;

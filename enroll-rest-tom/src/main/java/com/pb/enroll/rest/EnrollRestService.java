@@ -22,12 +22,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-
-/**
- *
- * @author rhea
- */
-@Path("/public")
+@Path("public")
 public class EnrollRestService {
     
     @Context
@@ -55,8 +50,6 @@ public class EnrollRestService {
 			e.printStackTrace();
 		}
     }
-    
-    
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -71,16 +64,11 @@ public class EnrollRestService {
     @Consumes(MediaType.APPLICATION_JSON)
     public void acceptEnrollment(String user) {
 
-    	//System.out.println("Enrolling " + user.getMessage() + " on connection " + factory);
-        
         Channel channel = null;
         
 		try {
 			channel = connection.createChannel();
-	        
-	        channel.basicPublish(exchange, routingKey, null,
-	        		//SerializationUtils.serialize(user.getMessage())
-	        		user.getBytes()
+	        channel.basicPublish(exchange, routingKey, null,user.getBytes()
 	        );
 	        
 	        
@@ -110,18 +98,4 @@ public class EnrollRestService {
     	}
     	return props.getProperty(key);
     }
-    
-/*    private JsonObject getRandomRegistration() {
-    	JsonObject model = Json.createObjectBuilder()
-    		.add("firstName", "Duke")
-    		.build();
-    	
-    	return model;
-    }
-*/
-    private byte[] getRegistrationBytes(String message) {
-    	String registrationJson = "{ \"name\":\"" + message + "\" }";
-    	return registrationJson.getBytes();
-    }    
-
 }

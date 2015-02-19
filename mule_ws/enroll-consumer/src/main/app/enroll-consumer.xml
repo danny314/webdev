@@ -59,11 +59,22 @@
 		<jdbc:query key="createRegistration" value="insert into pb_registration (id, name, email, username, gender) values (#[registrationId],#[name], #[email], #[username], #[gender]) "/>
 	</jdbc:connector>	
                 
+    <custom-transformer name="WebToDomainTransformer"  class="com.pb.enroll.transformers.WebToDomainTransformer" />
+                
 
 <flow name="echoFlow1" doc:name="echoFlow1">
 
 		<amqp:inbound-endpoint queueName="q01-enroll" exchangeName="exch01-topic" connector-ref="amqpAutoAckLocalhostConnector" />
-
+		
+           <json:json-to-object-transformer returnClass="com.debix.enrollment.beans.RegistrationView" />
+           
+           <logger message=" ** Payload = #[payload]" level="DEBUG" />
+           
+           <transformer ref="WebToDomainTransformer" />
+		
+           <logger message=" ** Payload = #[groovy:payload.toString()]" level="DEBUG" />
+		
+<!-- 
 		   <set-variable variableName="name" value="#[json:name]" />
 		   <set-variable variableName="email" value="#[json:email]" />
 		   <set-variable variableName="username" value="#[json:username]" />
@@ -82,5 +93,7 @@
       		<jdbc:outbound-endpoint exchange-pattern="request-response" queryKey="createRegistration" connector-ref="jdbcConnector" >
 				<jdbc:transaction action="BEGIN_OR_JOIN"/>
 			</jdbc:outbound-endpoint>
+			
+		 -->	
     </flow>                
 </mule>

@@ -18,5 +18,14 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0"/>
+	<classpathentry kind="lib" path="/home/puneet/.m2/repository/com/debix/service-common/1.9/service-common-1.9.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="com.debix"/>
+			<attribute name="maven.artifactId" value="service-common"/>
+			<attribute name="maven.version" value="1.9"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
